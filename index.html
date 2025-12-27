@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kim Yapay Zeka Milyoner Olmak İster?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .money-ladder {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .money-item {
+            padding: 8px 15px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #666;
+            border-left: 4px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .money-item.active {
+            background: #667eea;
+            color: white;
+            border-left-color: #667eea;
+            font-weight: bold;
+            transform: translateX(10px);
+        }
+
+        .money-item.passed {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            padding: 20px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .answer-btn {
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .answer-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .answer-btn.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .answer-btn.wrong {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+        }
+
+        .answer-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .jokers {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .joker-btn {
+            padding: 10px 15px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .joker-btn:hover:not(:disabled) {
+            background: #fb8c00;
+            transform: scale(1.05);
+        }
+
+        .joker-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #45a049;
+        }
+
+        .btn-restart {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-restart:hover {
+            background: #0b7dda;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-left: 5px solid #4caf50;
+        }
+
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+            border-left: 5px solid #f44336;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .game-over-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .final-amount {
+            font-size: 48px;
+            font-weight: bold;
+            color: #4caf50;
+            margin-bottom: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .music-indicator {
+            text-align: center;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">🎬 KİM YAPAY ZEKA MILYONER OLMAK İSTER? 🎬</div>
+            <div class="subtitle">Yapay Zeka Dünyasında Milyona Ulaşın!</div>
+            <div class="music-indicator">🎺 BOS BOS BOS BOOOOOS! 🎺</div>
+        </div>
+
+        <div class="money-ladder" id="moneyLadder"></div>
+
+        <div id="gameContent">
+            <div class="question-section">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="jokers" id="jokersContainer"></div>
+                <div class="answers" id="answersContainer"></div>
+                <div class="feedback" id="feedback"></div>
+                <div class="action-buttons" id="actionButtons"></div>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" class="game-over hidden">
+            <div class="game-over-title" id="gameOverTitle"></div>
+            <div class="final-amount" id="finalAmount"></div>
+            <button class="btn btn-restart" onclick="location.reload()">Yeni Oyun Başlat</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                amount: 1000,
+                question: "Aşağıdakilerden hangisi bir yapay zeka asistanıdır?",
+                answers: ["Grok", "Siri", "ChatGPT", "Hepsi yapay zeka asistanıdır!"],
+                correctAnswer: 3,
+                explanation: "Tüm seçenekler yapay zeka asistanlarıdır! Grok (xAI), Siri (Apple), ChatGPT (OpenAI) hepsi AI temelli asistanlardır."
+            },
+            {
+                amount: 2000,
+                question: "Claude kimler tarafından geliştirilmiştir?",
+                answers: ["Google", "Anthropic", "Meta", "Microsoft"],
+                correctAnswer: 1,
+                explanation: "Claude, Anthropic tarafından geliştirilmiş bir yapay zeka asistanıdır."
+            },
+            {
+                amount: 5000,
+                question: "ChatGPT'yi geliştiren şirket hangisidir?",
+                answers: ["Google DeepMind", "OpenAI", "Meta AI", "Tesla"],
+                correctAnswer: 1,
+                explanation: "ChatGPT, OpenAI tarafından geliştirilmiştir ve 2022 yılında yayınlanmıştır."
+            },
+            {
+                amount: 10000,
+                question: "Turing Testi neyi ölçmek için tasarlanmıştır?",
+                answers: ["Bilgisayarın hızını", "Makinenin insan benzeri zeka gösterip gösteremediğini", "Yazılımın kalitesini", "İnternet bağlantısını"],
+                correctAnswer: 1,
+                explanation: "Turing Testi, 1950'de Alan Turing tarafından önerilen bir testtir ve bir makinenin insan benzeri zeka gösterip gösteremediğini belirler."
+            },
+            {
+                amount: 25000,
+                question: "Derin Öğrenme (Deep Learning) hangi yapı üzerine kurulu bir tekniktir?",
+                answers: ["Klasik istatistik", "Sinir Ağları", "Kütüphaneler", "Veri tabanları"],
+                correctAnswer: 1,
+                explanation: "Derin Öğrenme, biyolojik sinir sisteminden ilham alan yapay sinir ağları üzerine kuruludur."
+            },
+            {
+                amount: 50000,
+                question: "xAI şirketi hangi girişimci tarafından kurulmuştur?",
+                answers: ["Sam Altman", "Sundar Pichai", "Elon Musk", "Mark Zuckerberg"],
+                correctAnswer: 2,
+                explanation: "xAI, Elon Musk tarafından kurulmuş ve Grok yapay zeka modelini geliştirmiştir."
+            },
+            {
+                amount: 100000,
+                question: "Antropic, Claude'yu geliştirirken hangi prensibe odaklanmıştır?",
+                answers: ["Maksimum hız", "İnsan Uyumlu Yapay Zeka (Constitutional AI)", "Minimum maliyet", "Maksimum boyut"],
+                correctAnswer: 1,
+                explanation: "Anthropic, Constitutional AI adı verilen bir yaklaşımla Claude'u geliştirmiştir - bu yaklaşım AI sistemlerinin insan değerleriyle uyumlu olmasını hedefler."
+            },
+            {
+                amount: 250000,
+                question: "Aşağıdakilerden hangisi bir Büyük Dil Modeli (LLM) değildir?",
+                answers: ["GPT-4", "Claude", "BERT", "Kuantum Bilgisayarı"],
+                correctAnswer: 3,
+                explanation: "Kuantum Bilgisayarı bir dil modeli değildir. GPT-4, Claude ve BERT hepsi Büyük Dil Modellerine örnek verilebilir."
+            },
+            {
+                amount: 500000,
+                question: "Yapay Zeka'nın Kışı (AI Winter) terimi neyi ifade eder?",
+                answers: ["Yüksek işlemci sıcaklığı dönemini", "AI araştırmasına olan ilgi ve finansmanın azaldığı dönemleri", "Kış aylarında yapılan AI araştırmalarını", "AI modellerinin yavaş performans gösterdiği zamanı"],
+                correctAnswer: 1,
+                explanation: "AI Kışı, AI araştırmasına yatırım ve ilginin önemli ölçüde azaldığı tarihi dönemleri ifade eder. 1970'ler ve 1980'lerde iki büyük AI Kışı yaşanmıştır."
+            },
+            {
+                amount: 1000000,
+                question: "Açık Yapay Zeka (Artificial General Intelligence - AGI) ne zaman gerçekleşebileceği hakkında en yaygın görüş nedir?",
+                answers: ["Zaten gerçekleşti", "2025'ten önce gerçekleşecek", "2030-2060 arasında gerçekleşebilir", "Asla gerçekleşmeyecek"],
+                correctAnswer: 2,
+                explanation: "Çoğu AI araştırmacısı, AGI'nin 2030-2060 yılları arasında gerçekleşebileceğini tahmin etmektedir. Ancak bu tahminler belirsizdir ve tartışmalıdır."
+            }
+        ];
+
+        const moneyLadder = [
+            "1.000 TL", "2.000 TL", "5.000 TL", "10.000 TL", "25.000 TL",
+            "50.000 TL", "100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswer = null;
+        let usedJokers = {
+            phone: false,
+            audience: false,
+            halfHalf: false,
+            doubleAnswer: false
+        };
+        let doubleAnswerUsed = false;
+
+        function initGame() {
+            renderMoneyLadder();
+            loadQuestion();
+        }
+
+        function renderMoneyLadder() {
+            const ladder = document.getElementById('moneyLadder');
+            ladder.innerHTML = '';
+            moneyLadder.forEach((money, index) => {
+                const div = document.createElement('div');
+                div.className = 'money-item';
+                if (index === currentQuestion) {
+                    div.classList.add('active');
+                } else if (index < currentQuestion) {
+                    div.classList.add('passed');
+                }
+                div.textContent = money;
+                ladder.appendChild(div);
+            });
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Soru ${currentQuestion + 1} - ${q.amount.toLocaleString('tr-TR')} TL`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            renderAnswers(q.answers);
+            renderJokers();
+            renderActionButtons();
+            selectedAnswer = null;
+            document.getElementById('feedback').classList.remove('show');
+        }
+
+        function renderAnswers(answers) {
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+            
+            answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = String.fromCharCode(65 + index) + ') ' + answer;
+                btn.onclick = () => selectAnswer(index, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(index, btn) {
+            if (selectedAnswer !== null) return;
+            selectedAnswer = index;
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function renderJokers() {
+            const container = document.getElementById('jokersContainer');
+            container.innerHTML = '';
+            
+            const jokerList = [
+                { key: 'phone', label: '📞 Telefon Joker', used: usedJokers.phone },
+                { key: 'audience', label: '👥 Seyirciye Sor', used: usedJokers.audience },
+                { key: 'halfHalf', label: '⚡ Yarı Yarıya', used: usedJokers.halfHalf },
+                { key: 'doubleAnswer', label: '🔄 Çift Cevap', used: usedJokers.doubleAnswer }
+            ];
+
+            jokerList.forEach(joker => {
+                const btn = document.createElement('button');
+                btn.className = 'joker-btn';
+                btn.textContent = joker.label;
+                btn.disabled = joker.used;
+                btn.onclick = () => useJoker(joker.key);
+                container.appendChild(btn);
+            });
+        }
+
+        function useJoker(jokerType) {
+            const q = questions[currentQuestion];
+            const correctAnswer = q.correctAnswer;
+            
+            switch(jokerType) {
+                case 'phone':
+                    alert(`📞 Telefon Joker:\n\nUzman cevabı: "${String.fromCharCode(65 + correctAnswer)} seçeneği doğru olmalı"\n\n(%85 başarı oranı)`);
+                    usedJokers.phone = true;
+                    break;
+                case 'audience':
+                    const audienceVote = {
+                        [correctAnswer]: Math.random() * 40 + 45,
+                        [(correctAnswer + 1) % 4]: Math.random() * 20 + 10,
+                        [(correctAnswer + 2) % 4]: Math.random() * 15 + 5,
+                        [(correctAnswer + 3) % 4]: Math.random() * 10 + 5
+                    };
+                    let voteText = "👥 Seyircinin Oylaması:\n\n";
+                    for (let i = 0; i < 4; i++) {
+                        voteText += `${String.fromCharCode(65 + i)}: %${Math.round(audienceVote[i] || Math.random() * 10)}\n`;
+                    }
+                    alert(voteText);
+                    usedJokers.audience = true;
+                    break;
+                case 'halfHalf':
+                    const wrong = [0, 1, 2, 3].filter(i => i !== correctAnswer);
+                    const toRemove = [wrong[Math.floor(Math.random() * wrong.length)], wrong[Math.floor(Math.random() * wrong.length)]].slice(0, 2);
+                    const buttons = document.querySelectorAll('.answer-btn');
+                    toRemove.forEach(index => {
+                        buttons[index].disabled = true;
+                        buttons[index].style.opacity = '0.3';
+                    });
+                    usedJokers.halfHalf = true;
+                    break;
+                case 'doubleAnswer':
+                    doubleAnswerUsed = true;
+                    alert("🔄 Çift Cevap Joker Aktif!\n\nİlk yanlış cevabınız sayılmayacak, 2. cevabınız değerlendirilecek.");
+                    usedJokers.doubleAnswer = true;
+                    break;
+            }
+            renderJokers();
+        }
+
+        function renderActionButtons() {
+            const container = document.getElementById('actionButtons');
+            container.innerHTML = '';
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'btn btn-submit';
+            submitBtn.textContent = 'Cevabı Gönder';
+            submitBtn.disabled = selectedAnswer === null;
+            submitBtn.onclick = submitAnswer;
+            container.appendChild(submitBtn);
+        }
+
+        function submitAnswer() {
+            if (selectedAnswer === null) return;
+            
+            const q = questions[currentQuestion];
+            const isCorrect = selectedAnswer === q.correctAnswer;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                buttons[selectedAnswer].classList.add('correct');
+                feedback.classList.remove('wrong');
+                feedback.classList.add('correct');
+                feedback.innerHTML = `✅ <strong>DOĞRU!</strong><br>${q.explanation}`;
+                
+                setTimeout(() => {
+                    if (currentQuestion < questions.length - 1) {
+                        currentQuestion++;
+                        selectedAnswer = null;
+                        doubleAnswerUsed = false;
+                        renderMoneyLadder();
+                        loadQuestion();
+                    } else {
+                        endGame(true);
+                    }
+                }, 3000);
+            } else {
+                if (doubleAnswerUsed) {
+                    buttons[selectedAnswer].classList.add('wrong');
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('wrong');
+                    feedback.innerHTML = `❌ <strong>YANLIŞ!</strong><br>Fakat Çift Cevap Jokeriniz var! Başka bir cevap seçebilirsiniz.`;
+                    
+                    doubleAnswerUsed = false;
+                    selectedAnswer = null;
+                    buttons.forEach(btn => btn.disabled = false);
+                    buttons.forEach(btn => btn.classList.remove('wrong', 'correct'));
+                } else {
+                    buttons[selectedAnswer].classList.add('wrong');
+                    buttons[q.correctAnswer].classList.add('correct');
+                    feedback.classList.remove('correct');
+                    feedback.classList.add('wrong');
+                    feedback.innerHTML = `❌ <strong>YANLIŞ!</strong><br>Doğru cevap: ${String.fromCharCode(65 + q.correctAnswer)}<br>${q.explanation}`;
+                    
+                    setTimeout(() => {
+                        endGame(false);
+                    }, 3000);
+                }
+            }
+        }
+
+        function endGame(won) {
+            const gameContent = document.getElementById('gameContent');
+            const gameOverScreen = document.getElementById('gameOverScreen');
+            const amount = questions[currentQuestion].amount;
+            
+            gameContent.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            
+            if (won) {
+                document.getElementById('gameOverTitle').textContent = '🎉 TEBRİKLER! MİLYON TL KAZANDINIZ! 🎉';
+                document.getElementById('finalAmount').textContent = '1.000.000 TL';
+            } else {
+                document.getElementById('gameOverTitle').textContent = '😢 Oyun Bitti!';
+                document.getElementById('finalAmount').textContent = `Toplam Kazanç: ${amount.toLocaleString('tr-TR')} TL`;
+            }
+        }
+
+        // Oyunu başlat
+        initGame();
+    </script>
+</body>
+</html>
